@@ -16,7 +16,7 @@ client.once('ready', async () => {
 
   const commands = [
     new SlashCommandBuilder()
-      .setName('say')
+      .setName('anon')
       .setDescription('Send a message (with optional reply-to)')
       .addStringOption(option => option.setName('text').setDescription('The message to send').setRequired(true))
       .addStringOption(option => option.setName('reply_to').setDescription('Message ID to reply to (optional)').setRequired(false)),
@@ -51,8 +51,8 @@ client.once('ready', async () => {
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
-  // ====================== /say Command ======================
-  if (interaction.commandName === 'say') {
+  // ====================== /anon Command ======================
+  if (interaction.commandName === 'anon') {
     const text = interaction.options.getString('text');
     const replyToId = interaction.options.getString('reply_to');
 
