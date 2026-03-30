@@ -62,7 +62,7 @@ client.on('interactionCreate', async interaction => {
       if (replyToId) {
         const repliedMessage = await interaction.channel.messages.fetch(replyToId).catch(() => null);
         if (repliedMessage) {
-          messageContent = `> ${repliedMessage.content}\n\n${text}`;
+          messageContent = `>${repliedMessage.content}\n\n${text}`;
         } else {
           await interaction.reply({ content: 'Could not find the message with that ID.', ephemeral: true });
           return;
