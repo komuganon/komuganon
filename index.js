@@ -53,33 +53,36 @@ client.on('interactionCreate', async interaction => {
 
   // ====================== /anon Command ======================
   if (interaction.commandName === 'anon') {
+    await interaction.deferReply({ ephemeral: true });   // ← Acknowledge instantly
+
     const text = interaction.options.getString('text');
     const replyToId = interaction.options.getString('reply_to');
 
     try {
       let messageContent = text;
-
       if (replyToId) {
         const repliedMessage = await interaction.channel.messages.fetch(replyToId).catch(() => null);
         if (repliedMessage) {
           messageContent = `>${repliedMessage.content}\n\n${text}`;
         } else {
-          await interaction.reply({ content: 'Could not find the message with that ID.', ephemeral: true });
+          await interaction.editReply({ content: 'Could not find the message with that ID.' });
           return;
         }
       }
 
       await interaction.channel.send(messageContent);
-      // Success → No reply (silent)
-      
+      await interaction.deleteReply();   // ← Remove the hidden message cleanly
+
     } catch (error) {
       console.error(error);
-      await interaction.reply({ content: 'Failed to send message.', ephemeral: true });
+      await interaction.editReply({ content: 'Failed to send message.' });
     }
   }
 
   // ====================== /poll Command ======================
   if (interaction.commandName === 'poll') {
+    await interaction.deferReply({ ephemeral: true });
+
     const title = interaction.options.getString('title');
     const opt1 = interaction.options.getString('option1');
     const opt2 = interaction.options.getString('option2');
@@ -106,30 +109,30 @@ client.on('interactionCreate', async interaction => {
         await pollMessage.react(emojis[i]);
       }
 
-      // Success → No reply (silent)
+      await interaction.deleteReply();   // Clean silent success
 
     } catch (error) {
       console.error(error);
-      await interaction.reply({ content: 'Failed to create poll.', ephemeral: true });
+      await interaction.editReply({ content: 'Failed to create poll.' });
     }
   }
 
   // ====================== /react Command ======================
   if (interaction.commandName === 'react') {
+    await interaction.deferReply({ ephemeral: true });
+
     const emoji = interaction.options.getString('emoji');
     const messageId = interaction.options.getString('message_id');
 
     try {
       const targetMessage = await interaction.channel.messages.fetch(messageId);
       await targetMessage.react(emoji);
-      // Success → No reply (silent)
+
+      await interaction.deleteReply();   // Clean silent success
 
     } catch (error) {
       console.error(error);
-      await interaction.reply({ 
-        content: 'Failed to react.', 
-        ephemeral: true 
-      });
+      await interaction.editReply({ content: 'Failed to react.' });
     }
   }
 });
